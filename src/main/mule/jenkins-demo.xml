@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="d3e61164-4af9-4b15-be1c-a59ce9aac352" >
+		<http:listener-connection host="0.0.0.0" port="${http.port}" />
+	</http:listener-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="d9a46099-0fe5-43e6-8cb9-6b067898ce31" file="config\config-common.yaml" />
+	<flow name="jenkins-demoFlow" doc:id="66bb36ac-65eb-4b1e-8ca5-1ef52ec22a63" >
+		<http:listener doc:name="HTTP:8081 /demo" doc:id="fca6b089-d86e-41bb-8253-4b130720f13a" config-ref="HTTP_Listener_config" path="/demo"/>
+		<logger level="INFO" doc:name="Start Logger" doc:id="c90d3782-bed7-43b8-b6b2-346f29b2590e" message='#["jenkins-demoFlow Start"]' category="START"/>
+		<ee:transform doc:name="set Payload" doc:id="1e120070-5885-43bc-b60a-88a0dac22aca" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message":"This is a demo on CI/CD using Jenkins"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="log payload" doc:id="9740aac6-167b-4f20-89f2-e49c9e119c15" message="#[payload]"/>
+		<logger level="INFO" doc:name="End Logger" doc:id="53576f9f-253a-4185-92fe-22423fe862c0" message='#["jenkins-demoFlow End"]' category="END" />
+	</flow>
+</mule>
